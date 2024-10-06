@@ -1,0 +1,57 @@
+# Ignore files in the root cpp-orderbook folder
+# Ignore the cpp-orderbook build directory
+/cpp-orderbook/build/
+/cpp-orderbook/src/  # Ignore source directory if needed
+
+# General C++ files
+*.o
+*.obj
+*.so
+*.dylib
+*.dll
+*.lib
+*.a
+*.exe
+*.out
+*.app
+
+# CMake files
+/cpp-orderbook/CMakeFiles/
+/cpp-orderbook/CMakeCache.txt
+/cpp-orderbook/cmake_install.cmake
+/cpp-orderbook/Makefile
+/cpp-orderbook/compile_commands.json
+/cpp-orderbook/Testing/
+cpp-orderbook/CTestTestfile.cmake
+
+# Visual Studio files
+/cpp-orderbook/.vs/
+/cpp-orderbook/*.VC.db
+/cpp-orderbook/*.VC.VC.opendb
+/cpp-orderbook/x64/
+cpp-orderbook/x86/
+cpp-orderbook/*.pdb
+cpp-orderbook/*.ilk
+cpp-orderbook/*.exp
+cpp-orderbook/*.idb
+cpp-orderbook/*.ipdb
+cpp-orderbook/*.iobj
+
+# Visual Studio Code files
+/cpp-orderbook/.vscode/
+
+# JetBrains IDE files
+/cpp-orderbook/.idea/
+
+# macOS
+/cpp-orderbook/.DS_Store
+
+# Windows
+/cpp-orderbook/Thumbs.db
+
+# Backup and temporary files
+/cpp-orderbook/*~
+/cpp-orderbook/*.bak
+/cpp-orderbook/*.tmp
+/cpp-orderbook/*.swp
+/cpp-orderbook/*.log
