@@ -12,7 +12,7 @@ endif()
 project ("cpp-orderbook")
 
 # Add source to this project's executable.
-add_executable (cpp-orderbook "main.cpp" "main.h"  "Order.h")
+add_executable (cpp-orderbook "main.cpp" "main.h"  "Order.h" "Orderbook.h" "Orderbook.cpp" "OrderMatchingEngine.h" "OrderMatchingEngine.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET cpp-orderbook PROPERTY CXX_STANDARD 20)

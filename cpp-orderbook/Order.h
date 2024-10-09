@@ -1,3 +1,4 @@
+#pragma once
 #include <time.h>
 class Order
 {
@@ -18,7 +19,7 @@ public:
 	int getId() { return m_id; }
 	long long getQuantity() const { return m_quantity; }
 	double getPrice() const { return m_price; }
-	bool isBuyOrder() { return m_isBuyOrder; }
+	bool isBuyOrder() const { return m_isBuyOrder; }
 	time_t getTimestamp() const { return m_timestamp; }
 
 	// setters

@@ -56,6 +56,20 @@ build CMakeFiles\cpp-orderbook.dir\main.cpp.obj: CXX_COMPILER__cpp-orderbook_uns
   TARGET_COMPILE_PDB = CMakeFiles\cpp-orderbook.dir\
   TARGET_PDB = cpp-orderbook.pdb
 
+build CMakeFiles\cpp-orderbook.dir\Orderbook.cpp.obj: CXX_COMPILER__cpp-orderbook_unscanned_Debug C$:\Users\seahs\repos\cpp-orderbook\cpp-orderbook\Orderbook.cpp || cmake_object_order_depends_target_cpp-orderbook
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Ob0 /Od /RTC1 -std:c++20 -ZI
+  OBJECT_DIR = CMakeFiles\cpp-orderbook.dir
+  OBJECT_FILE_DIR = CMakeFiles\cpp-orderbook.dir
+  TARGET_COMPILE_PDB = CMakeFiles\cpp-orderbook.dir\
+  TARGET_PDB = cpp-orderbook.pdb
+
+build CMakeFiles\cpp-orderbook.dir\OrderMatchingEngine.cpp.obj: CXX_COMPILER__cpp-orderbook_unscanned_Debug C$:\Users\seahs\repos\cpp-orderbook\cpp-orderbook\OrderMatchingEngine.cpp || cmake_object_order_depends_target_cpp-orderbook
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Ob0 /Od /RTC1 -std:c++20 -ZI
+  OBJECT_DIR = CMakeFiles\cpp-orderbook.dir
+  OBJECT_FILE_DIR = CMakeFiles\cpp-orderbook.dir
+  TARGET_COMPILE_PDB = CMakeFiles\cpp-orderbook.dir\
+  TARGET_PDB = cpp-orderbook.pdb
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target cpp-orderbook
@@ -64,7 +78,7 @@ build CMakeFiles\cpp-orderbook.dir\main.cpp.obj: CXX_COMPILER__cpp-orderbook_uns
 #############################################
 # Link the executable cpp-orderbook.exe
 
-build cpp-orderbook.exe: CXX_EXECUTABLE_LINKER__cpp-orderbook_Debug CMakeFiles\cpp-orderbook.dir\main.cpp.obj
+build cpp-orderbook.exe: CXX_EXECUTABLE_LINKER__cpp-orderbook_Debug CMakeFiles\cpp-orderbook.dir\main.cpp.obj CMakeFiles\cpp-orderbook.dir\Orderbook.cpp.obj CMakeFiles\cpp-orderbook.dir\OrderMatchingEngine.cpp.obj
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Ob0 /Od /RTC1 -ZI
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
   LINK_LIBRARIES = kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
