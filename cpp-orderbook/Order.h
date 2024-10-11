@@ -1,29 +1,43 @@
 #pragma once
-#include <time.h>
+#include <chrono>
+#include <ctime>
+#include <iostream>
+
+enum class OrderType
+{
+	Buy,
+	Sell
+};
+
 class Order
 {
 private:
 	int m_id;
 	long long m_quantity;
 	double m_price;
-	bool m_isBuyOrder;
-	time_t m_timestamp;
+	OrderType m_orderType;
+	std::chrono::time_point<std::chrono::system_clock> m_timestamp; // milliseconds
+
 
 public:
-	Order(int id, long long quantity, double price, bool isBuyOrder)
-		: m_id{ id }, m_quantity{ quantity }, m_price{ price }, m_isBuyOrder(isBuyOrder), m_timestamp{ time(nullptr) } {}
+	Order(int id, long long quantity, double price, OrderType orderType)
+		: m_id{ id }, m_quantity{ quantity }, m_price{ price }, m_orderType{orderType}, 
+		m_timestamp{ std::chrono::system_clock::now() } {}
 
 	~Order() = default;
 
-	// getters
+	// Getters
 	int getId() { return m_id; }
 	long long getQuantity() const { return m_quantity; }
 	double getPrice() const { return m_price; }
-	bool isBuyOrder() const { return m_isBuyOrder; }
-	time_t getTimestamp() const { return m_timestamp; }
+	OrderType getOrderType() const { return m_orderType; }
+	std::chrono::time_point<std::chrono::system_clock> getTimestamp() const { return m_timestamp; }
 
-	// setters
+	// Setters
 	void setQuantity(long long& quantity) { m_quantity = quantity; }
 	void setPrice(double& price) { m_price = price; }
-	void setTimestamp() { m_timestamp = time(nullptr); }
+
+	// Utility Functions
+	std::time_t getRawTimestamp() const;
+	void displayTimestamp() const;
 };

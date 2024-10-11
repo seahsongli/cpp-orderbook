@@ -4,7 +4,6 @@
 #include <optional>
 #include "Order.h"
 
-
 struct BuyOrderComparator
 {
 	bool operator() (const Order& order1, const Order& order2) const
@@ -12,7 +11,7 @@ struct BuyOrderComparator
 		if (order1.getPrice() == order2.getPrice())
 		{
 			// return the one with smaller timestamp, i.e. orders that came in first
-			return order1.getTimestamp() < order2.getTimestamp(); 
+			return order1.getRawTimestamp() < order2.getRawTimestamp(); 
 		}
 		return order1.getPrice() > order2.getPrice();
 	}
@@ -25,11 +24,12 @@ struct SellOrderComparator
 		if (order1.getPrice() == order2.getPrice())
 		{
 			// return the one with smaller timestamp, i.e. orders that came in first
-			return order1.getTimestamp() < order2.getTimestamp();
+			return order1.getRawTimestamp() < order2.getRawTimestamp();
 		}
 		return order1.getPrice() < order2.getPrice();
 	}
 };
+
 class Orderbook
 {
 private:

@@ -5,7 +5,7 @@
 
 void Orderbook::addOrder(const Order& order)
 {
-	if (order.isBuyOrder())
+	if (order.getOrderType() == OrderType::Buy)
 	{
 		buyOrders.push(order);
 	}
@@ -79,7 +79,8 @@ void Orderbook::printExistingOrders()
 			std::cout << "Order ID: " << order.getId()
 				<< ", Price: " << order.getPrice()
 				<< ", Quantity: " << order.getQuantity()
-				<< ", Timestamp: " << order.getTimestamp() << '\n';
+				<< ", Timestamp: ";
+			order.displayTimestamp();
 			buyOrdersCopy.pop();  // Remove the top element from the copy
 		}
 		std::cout << "\n";
@@ -100,7 +101,8 @@ void Orderbook::printExistingOrders()
 			std::cout << "Order ID: " << order.getId()
 				<< ", Price: " << order.getPrice()
 				<< ", Quantity: " << order.getQuantity()
-				<< ", Timestamp: " << order.getTimestamp() << '\n';
+				<< ", Timestamp: ";
+			order.displayTimestamp();
 			sellOrdersCopy.pop();  // Remove the top element from the copy
 			
 		}
