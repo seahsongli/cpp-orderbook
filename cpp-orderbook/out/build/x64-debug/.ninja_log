@@ -1,5 +1,12 @@
 # ninja log v5
-19	1213	7503371760520337	CMakeFiles/cpp-orderbook.dir/main.cpp.obj	38dfc22d08b658f6
-1214	1396	7503371761971059	cpp-orderbook.exe	e6e54bb35cd4bdfe
-30	1724	7503368257030793	CMakeFiles/cpp-orderbook.dir/OrderMatchingEngine.cpp.obj	45a2812484e52efe
-24	1070	7503368666676510	CMakeFiles/cpp-orderbook.dir/Orderbook.cpp.obj	708d69867d380164
+12	2475	7504330321264362	CMakeFiles/cpp-orderbook.dir/main.cpp.obj	38dfc22d08b658f6
+2475	2680	7504330322921487	cpp-orderbook.exe	f32ad0a32b5cdf1f
+19	2265	7504330319096154	CMakeFiles/cpp-orderbook.dir/OrderMatchingEngine.cpp.obj	45a2812484e52efe
+16	2394	7504330320374888	CMakeFiles/cpp-orderbook.dir/Orderbook.cpp.obj	708d69867d380164
+22	2374	7504319653896961	CMakeFiles/cpp-orderbook.dir/Order.cpp.obj	91b4201e70071f9d
+12	1843	7505260101352325	CMakeFiles/cpp-orderbook.dir/Orderbook.cpp.obj	708d69867d380164
+8	1931	7505260102166564	CMakeFiles/cpp-orderbook.dir/main.cpp.obj	38dfc22d08b658f6
+18	1185	7505263362813057	CMakeFiles/cpp-orderbook.dir/OrderMatchingEngine.cpp.obj	45a2812484e52efe
+1186	1436	7505263364619733	cpp-orderbook.exe	f32ad0a32b5cdf1f
+15	1185	7505265238814299	CMakeFiles/cpp-orderbook.dir/OrderMatchingEngine.cpp.obj	45a2812484e52efe
+1186	1362	7505265240063083	cpp-orderbook.exe	f32ad0a32b5cdf1f

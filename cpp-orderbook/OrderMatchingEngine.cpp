@@ -12,13 +12,18 @@ void OrderMatchingEngine::matchOrders()
 	}
 	if (bestBuy->getPrice() >= bestSell->getPrice()) // if we found a matching order
 	{
-		std::cout << "Order matched!" << std::endl;
+		std::cout << "Buy Order id "<< bestBuy->getId() << " matched with Sell Order id " << bestSell->getId() << std::endl;
 		if (bestSell->getQuantity() > bestBuy->getQuantity()) 
 		{
 			// Excess selling quantity.
 			std::cout << "Selling quantity is higher than Buying quantity!" << std::endl;
 			long long newSellQuantity = bestSell->getQuantity() - bestBuy->getQuantity();
-			bestSell->setQuantity(newSellQuantity);
+			m_orderbook.removeBestSellOrder();
+			if (newSellQuantity > 0) {
+				bestSell->setQuantity(newSellQuantity);
+				m_orderbook.addOrder(*bestSell); // bestSell is a std::optional type, but addOrder is taking in Order type as paramter, therefore we deference it.
+			}
+			
 			m_orderbook.removeBestBuyOrder();
 		}
 		else if (bestBuy->getQuantity() > bestSell->getQuantity())
@@ -26,7 +31,13 @@ void OrderMatchingEngine::matchOrders()
 			// Excess buying quantity.
 			std::cout << "Buying quantity is higher than Selling quantity!" << std::endl;
 			long long newBuyQuantity = bestBuy->getQuantity() - bestSell->getQuantity();
-			bestBuy->setQuantity(newBuyQuantity);
+			m_orderbook.removeBestBuyOrder();
+			if (newBuyQuantity > 0)
+			{
+				bestBuy->setQuantity(newBuyQuantity);
+				m_orderbook.addOrder(*bestBuy);
+			}
+
 			m_orderbook.removeBestSellOrder();
 		}
 		else 

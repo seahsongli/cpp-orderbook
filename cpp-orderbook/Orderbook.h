@@ -4,7 +4,7 @@
 #include <optional>
 #include "Order.h"
 
-struct BuyOrderComparator
+struct SellOrderComparator
 {
 	bool operator() (const Order& order1, const Order& order2) const
 	{
@@ -17,7 +17,7 @@ struct BuyOrderComparator
 	}
 };
 
-struct SellOrderComparator
+struct BuyOrderComparator
 {
 	bool operator() (const Order& order1, const Order& order2) const
 	{
@@ -36,7 +36,7 @@ private:
 	// Priority queue for buy orders (max-heap by price)
 	std::priority_queue<Order, std::vector<Order>, BuyOrderComparator> buyOrders;
 
-	// Priority queue for buy orders (min-heap by price)
+	// Priority queue for sell orders (min-heap by price)
 	std::priority_queue<Order, std::vector<Order>, SellOrderComparator> sellOrders;
 public:
 	void addOrder(const Order& order);
