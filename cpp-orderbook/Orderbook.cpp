@@ -114,3 +114,29 @@ void Orderbook::printExistingOrders()
 		std::cout << "\n";
 	}
 }
+
+std::map <double, long long> Orderbook::getBuyOrderVolume() const
+{
+	std::map<double, long long> volumeMap;
+	auto buyOrdersCopy = buyOrders;
+	while (!buyOrdersCopy.empty())
+	{
+		const Order& order = buyOrdersCopy.top();
+		volumeMap[order.getPrice()] += order.getQuantity();
+		buyOrdersCopy.pop();
+	}
+	return volumeMap;
+}
+
+std::map <double, long long> Orderbook::getSellOrderVolume() const
+{
+	std::map<double, long long> volumeMap;
+	auto sellOrdersCopy = sellOrders;
+	while (!sellOrdersCopy.empty())
+	{
+		const Order& order = sellOrdersCopy.top();
+		volumeMap[order.getPrice()] += order.getQuantity();
+		sellOrdersCopy.pop();
+	}
+	return volumeMap;
+}

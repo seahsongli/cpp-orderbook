@@ -2,6 +2,7 @@
 #include <vector>
 #include <queue>
 #include <optional>
+#include <map>
 #include "Order.h"
 
 struct SellOrderComparator
@@ -47,5 +48,8 @@ public:
 	void removeBestSellOrder();
 	
 	void printExistingOrders();
+
+	std::map <double, long long> getBuyOrderVolume() const;
+	std::map <double, long long> getSellOrderVolume() const;
 
 };
