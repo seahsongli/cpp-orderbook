@@ -31,7 +31,6 @@ Order generateRandomOrder(int id, std::mt19937 &mt)
 
 int main()
 {
-	std::this_thread::sleep_for(std::chrono::seconds(20));
 	Orderbook orderbook = Orderbook();
 	OrderMatchingEngine orderMatchingEngine = OrderMatchingEngine(orderbook);
 	OrderbookVisualizer orderbookVisualiser = OrderbookVisualizer();
