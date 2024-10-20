@@ -81,6 +81,14 @@ build CMakeFiles\cpp-orderbook.dir\Order.cpp.obj: CXX_COMPILER__cpp-orderbook_un
   TARGET_COMPILE_PDB = CMakeFiles\cpp-orderbook.dir\
   TARGET_PDB = cpp-orderbook.pdb
 
+build CMakeFiles\cpp-orderbook.dir\OrderbookVisualizer.cpp.obj: CXX_COMPILER__cpp-orderbook_unscanned_Debug C$:\Users\seahs\repos\cpp-orderbook\cpp-orderbook\OrderbookVisualizer.cpp || cmake_object_order_depends_target_cpp-orderbook
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Ob0 /Od /RTC1 -std:c++20 -ZI
+  INCLUDES = -external:IC:\Users\seahs\repos\vcpkg\installed\x64-windows\include -external:W0
+  OBJECT_DIR = CMakeFiles\cpp-orderbook.dir
+  OBJECT_FILE_DIR = CMakeFiles\cpp-orderbook.dir
+  TARGET_COMPILE_PDB = CMakeFiles\cpp-orderbook.dir\
+  TARGET_PDB = cpp-orderbook.pdb
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target cpp-orderbook
@@ -89,7 +97,7 @@ build CMakeFiles\cpp-orderbook.dir\Order.cpp.obj: CXX_COMPILER__cpp-orderbook_un
 #############################################
 # Link the executable cpp-orderbook.exe
 
-build cpp-orderbook.exe: CXX_EXECUTABLE_LINKER__cpp-orderbook_Debug CMakeFiles\cpp-orderbook.dir\main.cpp.obj CMakeFiles\cpp-orderbook.dir\Orderbook.cpp.obj CMakeFiles\cpp-orderbook.dir\OrderMatchingEngine.cpp.obj CMakeFiles\cpp-orderbook.dir\Order.cpp.obj | C$:\Users\seahs\repos\vcpkg\installed\x64-windows\debug\lib\sfml-network-d.lib C$:\Users\seahs\repos\vcpkg\installed\x64-windows\debug\lib\sfml-graphics-d.lib C$:\Users\seahs\repos\vcpkg\installed\x64-windows\debug\lib\sfml-window-d.lib C$:\Users\seahs\repos\vcpkg\installed\x64-windows\debug\lib\sfml-system-d.lib
+build cpp-orderbook.exe: CXX_EXECUTABLE_LINKER__cpp-orderbook_Debug CMakeFiles\cpp-orderbook.dir\main.cpp.obj CMakeFiles\cpp-orderbook.dir\Orderbook.cpp.obj CMakeFiles\cpp-orderbook.dir\OrderMatchingEngine.cpp.obj CMakeFiles\cpp-orderbook.dir\Order.cpp.obj CMakeFiles\cpp-orderbook.dir\OrderbookVisualizer.cpp.obj | C$:\Users\seahs\repos\vcpkg\installed\x64-windows\debug\lib\sfml-network-d.lib C$:\Users\seahs\repos\vcpkg\installed\x64-windows\debug\lib\sfml-graphics-d.lib C$:\Users\seahs\repos\vcpkg\installed\x64-windows\debug\lib\sfml-window-d.lib C$:\Users\seahs\repos\vcpkg\installed\x64-windows\debug\lib\sfml-system-d.lib
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Ob0 /Od /RTC1 -ZI
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
   LINK_LIBRARIES = C:\Users\seahs\repos\vcpkg\installed\x64-windows\debug\lib\sfml-network-d.lib  C:\Users\seahs\repos\vcpkg\installed\x64-windows\debug\lib\sfml-graphics-d.lib  C:\Users\seahs\repos\vcpkg\installed\x64-windows\debug\lib\sfml-window-d.lib  C:\Users\seahs\repos\vcpkg\installed\x64-windows\debug\lib\sfml-system-d.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib

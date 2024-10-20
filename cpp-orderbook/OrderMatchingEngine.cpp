@@ -7,7 +7,7 @@ void OrderMatchingEngine::matchOrders()
 	std::optional<Order> bestSell = m_orderbook.getBestSellOrder();
 	if (!bestBuy || !bestSell)
 	{
-		std::cout << "No matching orders available." << std::endl;
+		/*std::cout << "No matching orders available." << std::endl;*/
 		return;
 	}
 	if (bestBuy->getPrice() >= bestSell->getPrice()) // if we found a matching order
@@ -50,6 +50,6 @@ void OrderMatchingEngine::matchOrders()
 	}
 	else
 	{
-		std::cout << "No matching orders found at current prices." << std::endl;
+		/*std::cout << "No matching orders found at current prices." << std::endl;*/
 	}
 }

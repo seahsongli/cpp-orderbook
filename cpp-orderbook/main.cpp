@@ -1,19 +1,20 @@
 ﻿#include <iostream>
 #include <thread>
 #include <random>
+#include <mutex>
+#include <cmath>
 
 #include "Order.h"
 #include "Orderbook.h"
 #include "OrderMatchingEngine.h"
 #include "OrderbookVisualizer.h"
 
+std::mutex orderbookMutex; // to ensure thread-safe access since multiple threads need to access orderbook.
+std::mutex statusMutex; // to protect the status variable
+std::string status{};
 
-// Create simple GUI to show how the orderbook looks like
-// Fix CmakeLists.txt to include sfml libraries.
-// test out the visualization, include hot reload / real time updates too.
 Order generateRandomOrder(int id, std::mt19937 &mt)
 {
-	
 	/*std::uniform_int_distribution<int> idDist(1, 100);*/
 
 	std::uniform_int_distribution<long long> quantityDist(100, 1000);
@@ -22,15 +23,18 @@ Order generateRandomOrder(int id, std::mt19937 &mt)
 	
 	long long quantity = quantityDist(mt);
 	double price = priceDist(mt);
+	price = std::round(price * 100.0) / 100.0; // round to 2 decimal places
+
 	OrderType type = (typeDist(mt) == 0 ? OrderType::Buy : OrderType::Sell);
 	return Order(id, quantity, price, type);
-
 }
+
 int main()
 {
 	Orderbook orderbook = Orderbook();
 	OrderMatchingEngine orderMatchingEngine = OrderMatchingEngine(orderbook);
 	OrderbookVisualizer orderbookVisualiser = OrderbookVisualizer();
+	sf::RenderWindow window(sf::VideoMode(1200, 800), "Order Book Depth");
 
 	std::random_device rd; // A non-deterministic random seed (from the hardware)
 	std::mt19937 mt(rd());
@@ -39,15 +43,41 @@ int main()
 	// The main thread will be dealing with rendering the smfl window and rendering.
 	std::thread orderGenerator([&orderbook, &mt]()
 	{
-		for (int i = 0; i < 20; i++)
+		std::string lastStatusOrder;
+		for (int i = 0; i < 30; i++)
 		{
+
 			Order newOrder = generateRandomOrder(i + 1, mt);
-			orderbook.addOrder(newOrder);
+
+			{ // we put this around braces so that we dont lock the mutex for any longer it needs to be
+				std::lock_guard<std::mutex> lock(orderbookMutex);
+				orderbook.addOrder(newOrder);
+
+			} // mutex unlocks here
+
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 		}
 	});
+
+	std::thread orderMatcher([&orderMatchingEngine]()
+	{
+		std::string lastStatus; // To track the last status message
+
+		while(true)
+		{
+			{
+				// we put this around braces so that we dont lock the mutex for any longer it needs to be
+				std::lock_guard<std::mutex> lock(orderbookMutex);
+				orderMatchingEngine.matchOrders();
+				
+			} // mutex unlocks here
+
+			
+		}
+		std::this_thread::sleep_for(std::chrono::seconds(2));
+			
+	});
 	
-	sf::RenderWindow window(sf::VideoMode(1200, 1200), "Order Book Depth");
 	while (window.isOpen())
 	{
 		// Process events
@@ -58,21 +88,15 @@ int main()
 			if (event.type == sf::Event::Closed)
 				window.close();
 		}
-		orderbookVisualiser.visualize(window, orderbook);
-		std::this_thread::sleep_for(std::chrono::milliseconds(100)); // To adjust refresh rate of visualisation
-	}
 
+		{
+			std::lock_guard<std::mutex> lock(statusMutex);
+			orderbookVisualiser.visualize(window, orderbook, status);
+		}
+		
+		std::this_thread::sleep_for(std::chrono::milliseconds(5)); // To adjust refresh rate of visualisation
+	}
 	
 	orderGenerator.join(); // Main thread will wait for orderGeneratorThread to complete before continuing.
-	/*orderbook.printExistingOrders();
-
-	orderMatchingEngine.matchOrders();
-	orderbook.printExistingOrders();
-
-	orderMatchingEngine.matchOrders();
-	orderbook.printExistingOrders();
-
-	orderMatchingEngine.matchOrders();
-	orderbook.printExistingOrders();*/
-	
+	orderMatcher.detach(); // .detach() will ensure that the thread will run independently from the main thread.
 }
