@@ -2,7 +2,7 @@
 
 This project is an implementation of an **Orderbook** system in C++, featuring multithreaded execution, basic order matching, and a simple GUI for real-time visualization. The system efficiently matches buy and sell orders while allowing live updates of the orderbook state.
 
-<img src="./recording_cpp_orderbook.gif" alt="Order Book Demo" width="1200" height= "600" />
+<img src="./recording_cpp_orderbook.gif" alt="Order Book Demo" width="800" height= "300" />
 ## Features
 
 - **Multithreading**: 
