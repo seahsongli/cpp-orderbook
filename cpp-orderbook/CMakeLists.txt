@@ -18,7 +18,7 @@ project ("cpp-orderbook")
 find_package(SFML COMPONENTS system window graphics REQUIRED)
 
 # Add source to this project's executable.
-add_executable (cpp-orderbook "main.cpp" "Order.h" "Orderbook.h" "Orderbook.cpp" "OrderMatchingEngine.h" "OrderMatchingEngine.cpp" "Order.cpp" "OrderbookVisualizer.cpp")
+add_executable (cpp-orderbook "main.cpp" "Order.h" "Orderbook.h" "Orderbook.cpp" "OrderMatchingEngine.h" "OrderMatchingEngine.cpp" "Order.cpp" "OrderbookVisualizer.cpp" "OrderType.h" "Side.h")
 
 # Link SFML libraries
 target_link_libraries(cpp-orderbook PRIVATE sfml-system sfml-network sfml-graphics sfml-window)

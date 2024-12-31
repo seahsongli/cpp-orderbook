@@ -3,16 +3,34 @@
 #include "Orderbook.h"
 
 
+// implement whether to separate all the type of orders into distinct queues or all into 1 other than
+// fill and kill and fill or kill
+// fill or kill => if order cannot fill entirely, kill it
+// fill and kill => buy immediately, remaining order is killed
 void Orderbook::addOrder(const Order& order)
 {
-	if (order.getOrderType() == OrderType::Buy)
+	switch (order.getOrderType())
 	{
-		buyOrders.push(order);
+		case OrderType::Market:
+		case OrderType::GoodTillCancel:
+		case OrderType::GoodForDay:
+			if (order.getSide() == Side::Buy)
+			{
+				buyOrders.push(order);
+			}
+			else
+			{
+				sellOrders.push(order);
+			}
+			break;
+
+		// FOK & FAK Does not need to be added to the queue since we are handling them immediately.
+		case OrderType::FillAndKill:
+		case OrderType::FillOrKill:
+			break;
+
 	}
-	else
-	{
-		sellOrders.push(order);
-	}
+	
 }
 
 std::optional<Order> Orderbook::getBestBuyOrder() const
@@ -34,6 +52,7 @@ std::optional<Order> Orderbook::getBestSellOrder() const
 	// Return an empty std::optional
 	return std::nullopt;
 }
+
 
 void Orderbook::removeBestBuyOrder()
 {
@@ -61,6 +80,31 @@ void Orderbook::removeBestSellOrder()
 	}
 }
 
+void Orderbook::removeOrder(int orderId, Side side)
+{
+	if (side == Side::Buy)
+	{
+		if (buyOrders.remove(orderId))
+		{
+			std::cout << "Buy Order Id: " << orderId << " has been removed!";
+		}
+		else
+		{
+			std::cout << "Buy Order Id: " << orderId << " cannot be found!";
+		}
+	}
+	else
+	{
+		if (sellOrders.remove(orderId))
+		{
+			std::cout << "Sell Order Id: " << orderId << " has been removed!";
+		}
+		else
+		{
+			std::cout << "Sell Order Id: " << orderId << " cannot be found!";
+		}
+	}
+}
 void Orderbook::printExistingOrders()
 {
 	if (buyOrders.empty() && sellOrders.empty())

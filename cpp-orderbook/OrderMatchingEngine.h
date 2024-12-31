@@ -9,5 +9,6 @@ public:
 		: m_orderbook(orderbook) {}
 
 	void matchOrders();
+	void matchOrders(Orderbook& orderbook, Order& newOrder);
 	
 };

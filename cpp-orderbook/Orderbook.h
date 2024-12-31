@@ -39,6 +39,12 @@ private:
 
 	// Priority queue for sell orders (min-heap by price)
 	std::priority_queue<Order, std::vector<Order>, SellOrderComparator> sellOrders;
+
+	std::queue<Order> fakOrders;
+	std::queue<Order> fokOrders;
+	std::queue<Order> gfdOrders; // Need periodic checking (1 day)
+	std::queue<Order> gtcOrders;
+
 public:
 	void addOrder(const Order& order);
 	std::optional<Order> getBestBuyOrder() const;
