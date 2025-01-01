@@ -26,7 +26,7 @@ public:
 	~Order() = default;
 
 	// Getters
-	int getId() { return m_id; }
+	int getId() const { return m_id; }
 	long long getQuantity() const { return m_quantity; }
 	double getPrice() const { return m_price; }
 	OrderType getOrderType() const { return m_orderType; }

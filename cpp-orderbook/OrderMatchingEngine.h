@@ -10,5 +10,5 @@ public:
 
 	void matchOrders();
 	void matchOrders(Orderbook& orderbook, Order& newOrder);
-	
+	bool fillOrKillMatched(Order newOrder);
 };
