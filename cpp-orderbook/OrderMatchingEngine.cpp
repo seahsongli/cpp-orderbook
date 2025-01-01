@@ -1,66 +1,13 @@
 #include <iostream>
 #include "OrderMatchingEngine.h"
 
-void OrderMatchingEngine::matchOrders()
-{
-	std::optional<Order> bestBuy = m_orderbook.getBestBuyOrder();
-	std::optional<Order> bestSell = m_orderbook.getBestSellOrder();
-	if (!bestBuy || !bestSell)
-	{
-		/*std::cout << "No matching orders available." << std::endl;*/
-		return;
-	}
-	if (bestBuy->getPrice() >= bestSell->getPrice()) // if we found a matching order
-	{
-		std::cout << "Buy Order id "<< bestBuy->getId() << " matched with Sell Order id " << bestSell->getId() << std::endl;
-		if (bestSell->getQuantity() > bestBuy->getQuantity()) 
-		{
-			// Excess selling quantity.
-			std::cout << "Selling quantity is higher than Buying quantity!" << std::endl;
-			long long newSellQuantity = bestSell->getQuantity() - bestBuy->getQuantity();
-			m_orderbook.removeBestSellOrder();
-			if (newSellQuantity > 0) {
-				bestSell->setQuantity(newSellQuantity);
-				m_orderbook.addOrder(*bestSell); // bestSell is a std::optional type, but addOrder is taking in Order type as paramter, therefore we deference it.
-			}
-			
-			m_orderbook.removeBestBuyOrder();
-		}
-		else if (bestBuy->getQuantity() > bestSell->getQuantity())
-		{
-			// Excess buying quantity.
-			std::cout << "Buying quantity is higher than Selling quantity!" << std::endl;
-			long long newBuyQuantity = bestBuy->getQuantity() - bestSell->getQuantity();
-			m_orderbook.removeBestBuyOrder();
-			if (newBuyQuantity > 0)
-			{
-				bestBuy->setQuantity(newBuyQuantity);
-				m_orderbook.addOrder(*bestBuy);
-			}
-
-			m_orderbook.removeBestSellOrder();
-		}
-		else 
-		{
-			std::cout << "Full order match!" << std::endl;
-			// Both quantities match, remove both orders
-			m_orderbook.removeBestBuyOrder();
-			m_orderbook.removeBestSellOrder();
-		}
-	}
-	else
-	{
-		/*std::cout << "No matching orders found at current prices." << std::endl;*/
-	}
-}
-
 bool OrderMatchingEngine::fillOrKillMatched(Order newOrder)
 {
 	Side side = newOrder.getSide();
 
 	if (side == Side::Buy)
 	{
-		custom_priority_queue<Order, std::vector<Order>, SellOrderComparator> sellOrdersCopied = m_orderbook.getSellOrders();
+		custom_priority_queue<Order, std::vector<Order>, SellOrderComparator> sellOrdersCopied = m_orderbook.getSellOrdersCopy();
 		while (newOrder.getQuantity() > 0)
 		{
 			if (sellOrdersCopied.empty())
@@ -96,7 +43,7 @@ bool OrderMatchingEngine::fillOrKillMatched(Order newOrder)
 	}
 	else // sell side
 	{
-		custom_priority_queue<Order, std::vector<Order>, BuyOrderComparator> buyOrdersCopied = m_orderbook.getBuyOrders();
+		custom_priority_queue<Order, std::vector<Order>, BuyOrderComparator> buyOrdersCopied = m_orderbook.getBuyOrdersCopy();
 		while (newOrder.getQuantity() > 0)
 		{
 			if (buyOrdersCopied.empty())
@@ -131,95 +78,6 @@ bool OrderMatchingEngine::fillOrKillMatched(Order newOrder)
 		return true;
 	}
 }
-
-
-//bool OrderMatchingEngine::fillOrKillMatched(Order newOrder)
-//{
-//	Side side = newOrder.getSide();
-//
-//	if (side == Side::Buy)
-//	{
-//		custom_priority_queue<Order, std::vector<Order>, SellOrderComparator> sellOrdersCopied = m_orderbook.getSellOrders();
-//		while (newOrder.getQuantity() > 0)
-//		{
-//			if (sellOrdersCopied.empty()) 
-//			{
-//				std::cout << "No Sell Orders available!. Killing order now......." << std::endl;
-//				return false;
-//			}
-//			std::optional<Order> bestSell = sellOrdersCopied.top();
-//			
-//			if (!bestSell)
-//			{
-//				std::cout << "No matching orders available. Killing order now......" << std::endl;
-//				return false;
-//			}
-//
-//			if (newOrder.getPrice() >= bestSell->getPrice()) // if we found a matching order
-//			{
-//				std::cout << "Buy Order id " << newOrder.getId() << " matched with Sell Order id " << bestSell->getId() << std::endl;
-//				if (bestSell->getQuantity() >= newOrder.getQuantity())
-//				{
-//					return true;
-//				}
-//				else // partial order filled, we need to check the next best sellOrder
-//				{
-//					std::cout << "Selling quantity is lower than Buying quantity!" << std::endl;
-//					long long newBuyQuantity = newOrder.getQuantity()- bestSell->getQuantity();
-//					sellOrdersCopied.pop();
-//					newOrder.setQuantity(newBuyQuantity);
-//				}
-//			}
-//			else // not enough matching orders, so we should kill the entire order
-//			{
-//				std::cout << "Not enough orders to satisfy Fill Or Kill order.";
-//				return false;
-//			}
-//		}
-//		return true;
-//	}
-//	else // sell side
-//	{
-//		custom_priority_queue<Order, std::vector<Order>, BuyOrderComparator> buyOrdersCopied = m_orderbook.getBuyOrders();
-//		while (newOrder.getQuantity() > 0)
-//		{
-//			if (buyOrdersCopied.empty())
-//			{
-//				std::cout << "No Buy Orders available!. Killing order now......." << std::endl;
-//				return false;
-//			}
-//			std::optional<Order> bestBuy = buyOrdersCopied.top();
-//			if (!bestBuy)
-//			{
-//				std::cout << "No matching orders available. Killing order now......" << std::endl;
-//				return false;
-//			}
-//			if (newOrder.getPrice() <= bestBuy->getPrice()) // if we found a matching order
-//			{
-//				std::cout << "Sell Order id " << newOrder.getId() << " matched with Buy Order id " << bestBuy->getId() << std::endl;
-//				if (bestBuy->getQuantity() >= newOrder.getQuantity())
-//				{
-//					return true;
-//
-//				}
-//				else // partial order filled, we need to check the next best sellOrder
-//				{
-//					std::cout << "Selling quantity is lower than Buying quantity!" << std::endl;
-//					long long newSellQuantity = newOrder.getQuantity() - bestBuy->getQuantity();
-//					buyOrdersCopied.pop();
-//					newOrder.setQuantity(newSellQuantity);
-//				}
-//			}
-//			else // not enough matching orders, so we should kill the entire order
-//			{
-//				std::cout << "Not enough orders to satisfy Fill Or Kill order." << std::endl;
-//				return false;
-//			}
-//		}
-//		return true;
-//	}
-//
-//}
 
 void OrderMatchingEngine::matchOrders(Orderbook &orderbook, Order &newOrder)
 {

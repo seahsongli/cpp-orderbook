@@ -8,7 +8,6 @@ public:
 	OrderMatchingEngine(Orderbook& orderbook)
 		: m_orderbook(orderbook) {}
 
-	void matchOrders();
 	void matchOrders(Orderbook& orderbook, Order& newOrder);
 	bool fillOrKillMatched(Order newOrder);
 };

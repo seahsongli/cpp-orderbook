@@ -16,11 +16,11 @@ void Orderbook::addOrder(const Order& order)
 		case OrderType::GoodForDay:
 			if (order.getSide() == Side::Buy)
 			{
-				buyOrders.push(order);
+				m_buyOrders.push(order);
 			}
 			else
 			{
-				sellOrders.push(order);
+				m_sellOrders.push(order);
 			}
 			break;
 
@@ -35,9 +35,9 @@ void Orderbook::addOrder(const Order& order)
 
 std::optional<Order> Orderbook::getBestBuyOrder() const
 {
-	if (!buyOrders.empty())
+	if (!m_buyOrders.empty())
 	{
-		return buyOrders.top();
+		return m_buyOrders.top();
 	}
 	// Return an empty std::optional
 	return std::nullopt;
@@ -45,9 +45,9 @@ std::optional<Order> Orderbook::getBestBuyOrder() const
 
 std::optional<Order> Orderbook::getBestSellOrder() const
 {
-	if (!sellOrders.empty())
+	if (!m_sellOrders.empty())
 	{
-		return sellOrders.top();
+		return m_sellOrders.top();
 	}
 	// Return an empty std::optional
 	return std::nullopt;
@@ -56,9 +56,9 @@ std::optional<Order> Orderbook::getBestSellOrder() const
 
 void Orderbook::removeBestBuyOrder()
 {
-	if (!buyOrders.empty())
+	if (!m_buyOrders.empty())
 	{
-		buyOrders.pop();
+		m_buyOrders.pop();
 		std::cout << "Buy order removed!" << std::endl;
 	}
 	else
@@ -69,9 +69,9 @@ void Orderbook::removeBestBuyOrder()
 
 void Orderbook::removeBestSellOrder()
 {
-	if (!sellOrders.empty())
+	if (!m_sellOrders.empty())
 	{
-		sellOrders.pop();
+		m_sellOrders.pop();
 		std::cout << "Sell order removed!" << std::endl;
 	}
 	else
@@ -84,7 +84,7 @@ void Orderbook::removeOrder(int orderId, Side side)
 {
 	if (side == Side::Buy)
 	{
-		if (buyOrders.remove(orderId))
+		if (m_buyOrders.remove(orderId))
 		{
 			std::cout << "Buy Order Id: " << orderId << " has been removed!";
 		}
@@ -95,7 +95,7 @@ void Orderbook::removeOrder(int orderId, Side side)
 	}
 	else
 	{
-		if (sellOrders.remove(orderId))
+		if (m_sellOrders.remove(orderId))
 		{
 			std::cout << "Sell Order Id: " << orderId << " has been removed!";
 		}
@@ -105,18 +105,41 @@ void Orderbook::removeOrder(int orderId, Side side)
 		}
 	}
 }
+
+bool Orderbook::isValidGFDOrder(const Order& order)
+{
+	auto orderTime = order.getTimestamp();
+
+	auto now = std::chrono::system_clock::now();
+
+	std::time_t orderTimeT = std::chrono::system_clock::to_time_t(orderTime);
+	std::time_t nowT = std::chrono::system_clock::to_time_t(now);
+
+	std::tm orderDate = *std::localtime(&orderTimeT);
+	std::tm currentDate = *std::localtime(&nowT);
+
+	if (orderDate.tm_year == currentDate.tm_year &&
+		orderDate.tm_mon == currentDate.tm_mon &&
+		orderDate.tm_mday == currentDate.tm_mday)
+	{
+		return true; // Order is still valid
+	}
+
+	return false; // Order is no longer valid
+}
+
 void Orderbook::printExistingOrders()
 {
-	if (buyOrders.empty() && sellOrders.empty())
+	if (m_buyOrders.empty() && m_sellOrders.empty())
 	{
 		std::cout << "No buy and sell orders at the moment" << std::endl;
 		std::cout << "\n";
 	}
 
-	if (!buyOrders.empty())
+	if (!m_buyOrders.empty())
 	{
 		std::cout << "The existing buy orders are as of follows:" << std::endl;
-		auto buyOrdersCopy = buyOrders;
+		auto buyOrdersCopy = m_buyOrders;
 		while (!buyOrdersCopy.empty())
 		{
 			Order order = buyOrdersCopy.top();
@@ -135,10 +158,10 @@ void Orderbook::printExistingOrders()
 		std::cout << "\n";
 	}
 
-	if (!sellOrders.empty())
+	if (!m_sellOrders.empty())
 	{
 		std::cout << "The existing sell orders are as of follows:" << std::endl;
-		auto sellOrdersCopy = sellOrders;
+		auto sellOrdersCopy = m_sellOrders;
 		while (!sellOrdersCopy.empty())
 		{
 			Order order = sellOrdersCopy.top();
@@ -162,7 +185,7 @@ void Orderbook::printExistingOrders()
 std::map <double, long long> Orderbook::getBuyOrderVolume() const
 {
 	std::map<double, long long> volumeMap;
-	auto buyOrdersCopy = buyOrders;
+	auto buyOrdersCopy = m_buyOrders;
 	while (!buyOrdersCopy.empty())
 	{
 		const Order& order = buyOrdersCopy.top();
@@ -175,7 +198,7 @@ std::map <double, long long> Orderbook::getBuyOrderVolume() const
 std::map <double, long long> Orderbook::getSellOrderVolume() const
 {
 	std::map<double, long long> volumeMap;
-	auto sellOrdersCopy = sellOrders;
+	auto sellOrdersCopy = m_sellOrders;
 	while (!sellOrdersCopy.empty())
 	{
 		const Order& order = sellOrdersCopy.top();

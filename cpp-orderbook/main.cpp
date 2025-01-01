@@ -89,7 +89,8 @@ int main()
 	std::thread orderMatcher([&orderMatchingEngine, &orderbook, &newOrder]()
 	{
 		std::string lastStatus; // To track the last status message
-
+		std::time_t currentDay = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+		std::tm* currentDate = std::localtime(&currentDay);
 		while(true)
 		{
 			{
@@ -100,7 +101,70 @@ int main()
 				newOrderAdded = false;
 			} // mutex unlocks here
 
-			
+			std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+			std::tm* nowDate = std::localtime(&now);
+			if (currentDate->tm_year != nowDate->tm_year ||
+				currentDate->tm_mon != nowDate->tm_mon ||
+				currentDate->tm_mday != nowDate->tm_mday)
+			{
+				currentDate = nowDate;
+
+				{
+					std::lock_guard<std::mutex> lock(orderbookMutex);
+					auto buyOrders = orderbook.getBuyOrdersReference();
+					std::vector<Order> validBuyOrders; // temp storage that will be used to build back the orders
+					size_t orderCount = buyOrders.size();
+
+					// Check GFD Validity for BUY orders
+					for (size_t i = 0; i < orderCount; ++i)
+					{
+						Order bestBuyOrder = buyOrders.top();
+						buyOrders.pop();
+
+						// Check if it's a GoodForDay order and if it is valid
+						if (bestBuyOrder.getOrderType() == OrderType::GoodForDay && !orderbook.isValidGFDOrder(bestBuyOrder))
+						{
+							std::cout << "Removing invalid GFD order: " << bestBuyOrder.getId() << std::endl;
+						}
+						else
+						{
+							validBuyOrders.push_back(bestBuyOrder);	// If valid, store it in the validOrders vector
+						}
+					}
+
+					for (const auto& order : validBuyOrders) // Push all valid orders back into the priority queue
+					{
+						buyOrders.push(order);
+					}
+
+					// Check GFD Validity for SELL orders
+					auto sellOrders = orderbook.getSellOrdersReference();
+					std::vector<Order> validSellOrders; // temp storage that will be used to build back the orders
+					orderCount = sellOrders.size();
+
+					for (size_t i = 0; i < orderCount; ++i)
+					{
+						Order bestSellOrder = buyOrders.top();
+						sellOrders.pop();
+
+						// Check if it's a GoodForDay order and if it is valid
+						if (bestSellOrder.getOrderType() == OrderType::GoodForDay && !orderbook.isValidGFDOrder(bestSellOrder))
+						{
+							std::cout << "Removing invalid GFD order: " << bestSellOrder.getId() << std::endl;
+						}
+						else
+						{
+							validBuyOrders.push_back(bestSellOrder); // If valid, store it in the validOrders vector
+						}
+					}
+
+					for (const auto& order : validSellOrders) // Push all valid orders back into the priority queue
+					{
+						sellOrders.push(order);
+					}
+				}
+				std::this_thread::sleep_for(std::chrono::seconds(10)); // Check for a new day every 10 seconds
+			}
 		}
 		std::this_thread::sleep_for(std::chrono::seconds(2));
 			
