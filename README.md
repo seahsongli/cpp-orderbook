@@ -4,18 +4,37 @@ This project is an implementation of an **Orderbook** system in C++, featuring m
 
 <img src="./recording_cpp_orderbook.gif" alt="Order Book Demo" width="800" height= "300" />
 
-## Features
+# Features
 
-- **Multithreading**: 
-  - One thread generates random orders (both buy and sell).
-  - Another thread handles order matching.
-  - The main thread is responsible for rendering the GUI.
-- **Order Matching**: 
-  - Basic price-time priority order matching.
-  - Partial order fulfillment is handled: when a buy or sell order's quantity exceeds the available counterpart.
-  - Real-time order removal and insertion into the orderbook.
-- **Simple GUI**: A graphical interface built with SFML displays orderbook depth and shows matched orders in real-time.
-- **Data Structures**: The system uses priority queues to manage buy and sell orders efficiently, maintaining price-time priority.
+## Multithreading
+- One thread generates random orders (buy and sell) with support for multiple order types.
+- Another thread handles order matching based on the type and priority of the orders.
+- The main thread is responsible for rendering the GUI.
+
+## Order Types
+- **GoodTillCancel (GTC):** Orders remain active until explicitly canceled.
+- **FillAndKill (FAK):** Orders execute immediately for the available quantity; unfulfilled quantities are canceled.
+- **FillOrKill (FOK):** Orders execute immediately and completely; if full execution is not possible, the order is canceled.
+- **GoodForDay (GFD):** Orders remain valid until the end of the trading day.
+- **Market Orders:** Execute immediately at the best available price.
+
+## Order Matching
+- Implements price-time priority matching for limit orders.
+- Handles partial order fulfillment for applicable order types.
+- Includes specific behavior for each order type:
+  - Time-based expiration for `FOK` and `GFD` orders.
+  - Immediate cancellation for unfulfilled `FAK` orders.
+- Real-time removal and insertion of orders into the orderbook.
+
+## Simple GUI
+- A graphical interface built with SFML displays:
+  - Orderbook depth, updated in real time.
+  - Matched orders, categorized by type.
+  - Status of expired or canceled orders.
+
+## Data Structures
+- Uses priority queues to efficiently manage buy and sell orders while maintaining price-time priority.
+- Enhanced to handle and prioritize orders based on their type and associated rules.
   
 ## Table of Contents
 
@@ -103,14 +122,50 @@ The project consists of several key components:
 
 ## Order Matching Logic
 
-The order matching engine works as follows:
+The order matching engine supports various order types and operates as follows:
 
-1. **Price-Time Priority**: Buy and sell orders are matched based on price. For orders with the same price, time priority (FIFO) is used.
-2. **Partial Orders**: If a buy order's quantity is greater than the matching sell order, the remaining quantity of the buy order is re-added to the orderbook, and vice versa.
-3. **Execution**: When a match occurs, both orders are removed from the orderbook (either fully or partially).
+### 1. **Order Types**
+- **Market Orders**: Executes immediately against the best available prices.
+- **Fill-Or-Kill (FOK)**: Executes immediately and completely; otherwise, the order is canceled.
+- **Fill-And-Kill (FAK)**: Partially fills the order with the best available matches and cancels the remaining quantity.
 
-### Example Matching Scenario
+### 2. **Matching Logic**
+- **Price-Time Priority**:
+  - Orders are matched based on price. For orders with the same price, the time of submission determines priority (First-In-First-Out).
+- **Partial Matches**:
+  - If a buy order's quantity exceeds the best matching sell order's quantity (or vice versa), the remaining quantity is reprocessed (for FAK) or canceled (for FOK).
+- **Execution**:
+  - Fully matched orders are removed from the order book.
+  - Partially matched orders (depending on the type) may either be retained with updated quantities or canceled.
 
-- A buy order for 500 units at \$400 and a sell order for 300 units at \$390 will match because the buy price is greater than or equal to the sell price.
-- After the match, the remaining 200 units of the buy order will be left in the orderbook.
+### 3. **Fill-Or-Kill (FOK)**
+- FOK orders must be completely satisfied upon submission. If not, they are immediately canceled:
+  - If a matching sell order (for buy FOK) or buy order (for sell FOK) exists with sufficient quantity at the required price or better, the order executes.
+  - If no sufficient match is available, the order is canceled entirely.
 
+### 4. **Fill-And-Kill (FAK)**
+- FAK orders execute as much as possible upon submission, with any unmatched portion canceled:
+  - Matches are made against the best available orders in the book.
+  - If a partial match occurs, the remaining quantity is canceled.
+  - Fully matched orders are executed and removed.
+
+### 5. **Market Orders**
+- Market orders match the best available orders on the opposite side of the order book:
+  - Execution continues until the order's quantity is completely fulfilled or no further matching orders exist.
+  - Remaining unmatched portions are left open if the market order type allows (e.g., GTC or GFD).
+
+### 6. **Example Workflow**
+- **Buy Order Matching**:
+  - Check the best available sell order.
+  - Compare the buy order price against the sell order price:
+    - If the buy price is greater than or equal to the sell price, execute the match.
+    - If unmatched quantities remain, reprocess or cancel based on the order type.
+- **Sell Order Matching**:
+  - Similar logic is applied in reverse for sell orders.
+
+### 7. **Edge Cases**
+- If no matching orders are available:
+  - FOK orders are canceled.
+  - FAK orders are partially filled, and the rest is canceled.
+
+Refer to the implementation in `OrderMatchingEngine.cpp` for detailed logic.
