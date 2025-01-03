@@ -22,7 +22,7 @@ Order generateRandomOrder(int id, std::mt19937 &mt)
 
 	std::uniform_int_distribution<long long> quantityDist(100, 1000);
 	std::uniform_real_distribution<double> priceDist(100.0, 450.0);
-	std::uniform_int_distribution<int> typeDist(0, 4); 
+	std::uniform_int_distribution<int> typeDist(0, 5); 
 	std::uniform_int_distribution<int> sideDist(0, 1); // 0 = Buy, 1 = Sell
 	long long quantity = quantityDist(mt);
 	double price = priceDist(mt);
@@ -45,6 +45,9 @@ Order generateRandomOrder(int id, std::mt19937 &mt)
 		break;
 	case 4:
 		type = OrderType::Market;
+		break;
+	case 5:
+		type = OrderType::Limit;
 		break;
 	default:
 		throw std::runtime_error("Unexpected random value for OrderType");
