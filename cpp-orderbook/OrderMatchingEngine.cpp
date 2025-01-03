@@ -255,8 +255,76 @@ void OrderMatchingEngine::matchOrders(Orderbook &orderbook, Order &newOrder)
 		}
 
 	}
+	else if (orderType == OrderType::Market)
+	{
+		while (newOrder.getQuantity() > 0)
+		{
+			if (side == Side::Buy)
+			{
+				std::optional<Order> bestSell = m_orderbook.getBestSellOrder();
+				if (!bestSell)
+				{
+					std::cout << "No sell orders available. Cancelling market order......." << std::endl;
+					return;
+				}
 
-	else // If orderType is market order, GTC or GFD
+				if (bestSell->getQuantity() > newOrder.getQuantity())
+				{
+					// Excess selling quantity.
+					std::cout << "Selling quantity is higher than Buying quantity!" << std::endl;
+					long long newSellQuantity = bestSell->getQuantity() - newOrder.getQuantity();
+					m_orderbook.removeBestSellOrder();
+					if (newSellQuantity > 0) {
+						bestSell->setQuantity(newSellQuantity);
+						m_orderbook.addOrder(*bestSell); // bestSell is a std::optional type, but addOrder is taking in Order type as paramter, therefore we deference it.
+					}
+					m_orderbook.removeOrder(newOrder.getId(), side); // remove newOrder since it is scarce
+					newOrder.setQuantity(0);
+				}
+				else
+				{
+					std::cout << "Full order match!" << std::endl;
+					// Both quantities match, remove both orders
+					m_orderbook.removeOrder(newOrder.getId(), side);
+					m_orderbook.removeBestSellOrder();
+				}
+			}
+			else
+			{
+				std::optional<Order> bestBuy = m_orderbook.getBestBuyOrder();
+				if (!bestBuy)
+				{
+					std::cout << "No matching orders available." << std::endl;
+					return;
+				}
+				if (newOrder.getPrice() <= bestBuy->getPrice()) // if we found a matching order
+				{
+					std::cout << "Sell Order id " << newOrder.getId() << " matched with Buy Order id " << bestBuy->getId() << std::endl;
+					if (bestBuy->getQuantity() > newOrder.getQuantity())
+					{
+						// Excess selling quantity.
+						std::cout << "Selling quantity is higher than Buying quantity!" << std::endl;
+						long long newBuyQuantity = bestBuy->getQuantity() - newOrder.getQuantity();
+						m_orderbook.removeBestBuyOrder();
+						if (newBuyQuantity > 0) {
+							bestBuy->setQuantity(newBuyQuantity);
+							m_orderbook.addOrder(*bestBuy); // bestSell is a std::optional type, but addOrder is taking in Order type as paramter, therefore we deference it.
+						}
+						m_orderbook.removeBestBuyOrder(); // remove new Order
+						return;
+					}
+				}
+				else
+				{
+					std::cout << "Full order match!" << std::endl;
+					// Both quantities match, remove both orders
+					m_orderbook.removeBestBuyOrder();
+					m_orderbook.removeBestSellOrder();
+				}
+			}
+		}
+	}
+	else // If orderType is Limit order, GTC or GFD
 	{
 		if (side == Side::Buy)
 		{

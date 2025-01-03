@@ -5,5 +5,5 @@ enum class OrderType
 	FillOrKill, // last for a few seconds
 	GoodForDay,
 	Market,
-
+	Limit
 };
